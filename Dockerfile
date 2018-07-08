@@ -14,7 +14,7 @@ RUN \
     && rm -rf /var/lib/lists/*
 
 
-RUN pip install opencv-python
+RUN pip install opencv-python && \
     git clone https://github.com/davisking/dlib.git && \
     cd dlib && \
     python setup.py install --yes DLIB_USE_CUDA --yes USE_AVX_INSTRUCTIONS && \

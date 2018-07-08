@@ -11,6 +11,7 @@ RUN \
     curl \
     git \
     cmake \
+    wget \
     && rm -rf /var/lib/lists/*
 
 

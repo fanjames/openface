@@ -1,35 +1,34 @@
-FROM bamos/ubuntu-opencv-dlib-torch:ubuntu_14.04-opencv_2.4.11-dlib_19.0-torch_2016.07.12
-MAINTAINER Brandon Amos <brandon.amos.cs@gmail.com>
+FROM nvidia/cuda:9.1-cudnn7-devel-ubuntu16.04
 
-# TODO: Should be added to opencv-dlib-torch image.
-RUN ln -s /root/torch/install/bin/* /usr/local/bin
+MAINTAINER fanhua
 
-RUN apt-get update && apt-get install -y \
+# Add a few needed packages to the base Ubuntu 16.04
+# OK, maybe *you* don't need emacs :-)
+RUN \
+    apt-get update && apt-get install -y \
+    python-pip \
+    build-essential \
     curl \
     git \
-    graphicsmagick \
-    libssl-dev \
-    libffi-dev \
-    python-dev \
-    python-pip \
-    python-numpy \
-    python-nose \
-    python-scipy \
-    python-pandas \
-    python-protobuf \
-    python-openssl \
-    wget \
-    zip \
-    && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    cmake \
+    && rm -rf /var/lib/lists/*
 
-ADD . /root/openface
-RUN python -m pip install --upgrade --force pip
-RUN cd ~/openface && \
+
+RUN pip install opencv-python
+    git clone https://github.com/davisking/dlib.git && \
+    cd dlib && \
+    python setup.py install --yes DLIB_USE_CUDA --yes USE_AVX_INSTRUCTIONS && \
+    cd .. && rm -rf dlib
+
+RUN cd /root && \
+    git clone https://github.com/cmusatyalab/openface.git && \
+    cd openface && \
     ./models/get-models.sh && \
-    pip2 install -r requirements.txt && \
-    python2 setup.py install && \
-    pip2 install --user --ignore-installed -r demos/web/requirements.txt && \
-    pip2 install -r training/requirements.txt
+    pip install -r requirements.txt && \
+    python setup.py install && \
+    pip install --user --ignore-installed -r demos/web/requirements.txt && \
+    pip install -r training/requirements.txt
+
 
 EXPOSE 8000 9000
 CMD /bin/bash -l -c '/root/openface/demos/web/start-servers.sh'

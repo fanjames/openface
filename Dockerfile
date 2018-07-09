@@ -15,7 +15,8 @@ RUN \
     && rm -rf /var/lib/lists/*
 
 
-RUN pip install opencv-python && \
+RUN pip install --upgrade pip && \
+    pip install opencv-python && \
     git clone https://github.com/davisking/dlib.git && \
     cd dlib && \
     python setup.py install --yes DLIB_USE_CUDA --yes USE_AVX_INSTRUCTIONS && \
@@ -27,8 +28,7 @@ RUN cd /root && \
     ./models/get-models.sh && \
     pip install -r requirements.txt && \
     python setup.py install && \
-    pip install --user --ignore-installed -r demos/web/requirements.txt && \
-    pip install -r training/requirements.txt
+    pip install --user --ignore-installed -r demos/web/requirements.txt
 
 
 EXPOSE 8000 9000
